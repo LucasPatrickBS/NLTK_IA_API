@@ -1,13 +1,10 @@
 import pandas                        as pd
-import seaborn                       as sns
-import matplotlib.pyplot             as plt
 import unidecode
 import pickle
 import nltk
 from sklearn.linear_model            import LogisticRegression
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection         import train_test_split
-from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from string                          import punctuation
 from nltk                            import tokenize
@@ -16,36 +13,31 @@ from flask                           import request
 
 app = Flask(__name__)
 
-# Indica as regras de vetorização, para ser aplicada em uma base de dados.
 vetorizar = CountVectorizer(lowercase=False, ngram_range = (1,2))
 
-# Configura a vetorização do Tfidf
 tfidf = TfidfVectorizer(lowercase=False, max_features=50)
 
-# Possibilita seprar as palavras, a partir de espaçoes em branco.
 token_espaco    = tokenize.WhitespaceTokenizer()
 token_pontuacao = tokenize.WordPunctTokenizer()
 
-# Criando variável com os dados de teste.
-data = pd.read_csv("../[TRATADO]imdb-reviews.csv")
+# data = pd.read_csv("../[TRATADO]imdb-reviews.csv")
 
-# Cria uma lista de pontuações.
 pontuacao = list()
 for ponto in punctuation:
     pontuacao.append(ponto)
 
-# Atribui a variável a biblioteca RSLPStemmer da nltk.
 stemmer = nltk.RSLPStemmer()
-    
-# Cria uma variável com tudo de irrelevante para a IA (acentos, palavras irrelevantes e outros.)
+
 palavras_irrelevantes = nltk.corpus.stopwords.words("portuguese")
 palavras_irrelevantes_sem_acentos = [unidecode.unidecode(texto) for texto in palavras_irrelevantes]
 stopWords_pontuacao_acentos = pontuacao + palavras_irrelevantes + [unidecode.unidecode(texto) for texto in palavras_irrelevantes];
 
 @app.route('/treinar')
 def treinarModelo():
-    data = pd.read_csv("../[TRATADO]imdb-reviews.csv")
+    # data = pd.read_csv("../[TRATADO]imdb-reviews.csv")
     
+    data = 'Troque quando necessário...'
+
     print('VETORIZANDO')
 
     vetorizar = CountVectorizer(lowercase=False, ngram_range = (1,2))
@@ -90,12 +82,10 @@ def validar():
 
     dicionario = {'frases': frasesInUrl}
 
-    print('dicionario', dicionario)
-
     df = pd.DataFrame(dicionario, columns=['frases'])
     
     predict = classify_utterance(df["frases"])
 
-    print('Retorno ->', predict)
+    retorno = str(predict)
 
-    return 'Predict enviado!'
+    return retorno
